@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<!-- VERSION 2.0 - TWILIO UPDATED -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | ReminderBot</title>
+    <link rel="stylesheet" href="/static/style.css?v=1.1">
+</head>
+<body>
+    <nav>
+        <a href="/" class="nav-brand">ReminderBot</a>
+        <div class="nav-links">
+            <span style="color: var(--text-secondary); margin-right: 1.5rem;" id="userEmail"></span>
+            <a href="#" class="btn btn-outline" onclick="logout()">Log out</a>
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 3rem;">
+        
+        <div id="sandboxWarning" class="alert alert-warning mb-4" style="display: none;">
+            <strong>Sandbox Limitation:</strong> Remember to re-send the WhatsApp join message if you haven't received a notification in 72 hours.
+        </div>
+
+        <div class="trust-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+            Your data is encrypted with AES-256
+        </div>
+
+        <div class="flex justify-between items-center">
+            <div>
+                <h2>Bot Configuration Space</h2>
+                <p>Set up your monitoring preferences. Changes will automatically reschedule your bot.</p>
+            </div>
+            <button class="btn btn-outline" id="openWizardBtn">✨ Quick Setup Wizard</button>
+        </div>
+
+        <form id="settingsForm" class="card mt-4">
+            
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 style="margin: 0;">Enable Bot</h3>
+                    <span class="help-text">Turn your daily monitoring job on or off.</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="botEnabled">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 2rem 0;">
+
+            <div class="form-group">
+                <label for="watchSenders">Specific Senders to Watch</label>
+                <input type="text" id="watchSenders" placeholder="e.g. alerts@bank.com, hr@company.com">
+                <div class="help-text">Comma separated list of emails.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="watchKeywords">Keywords to Watch</label>
+                <input type="text" id="watchKeywords" placeholder="e.g. internship, placement, recruitment">
+                <div class="help-text">Matches in email subjects. Standard list: internship, placement, recruitment, job offer, hiring, opportunity, interview, shortlisted, selected, apply</div>
+            </div>
+
+            <div class="form-group">
+                <label for="notificationTime">Daily Notification Time (UTC)</label>
+                <input type="time" id="notificationTime" required>
+                <div class="help-text">The bot runs 10 minutes before this time to fetch your emails.</div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 2rem 0;">
+
+            <h3>Opportunity Sources</h3>
+            <div class="flex items-center justify-between mb-4 mt-2">
+                <div>
+                    <strong>Devpost Hackathons</strong>
+                    <div class="help-text">Scrape open hackathons with deadlines in next 30 days.</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="enableDevpost" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <strong>Unstop Competitions</strong>
+                    <div class="help-text">Parse competitions posted or updated in last 24 hours.</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="enableUnstop" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 2rem 0;">
+
+            <h3>Twilio WhatsApp Configuration</h3>
+            
+            <div class="form-group">
+                <label for="twilioSid">Twilio Account SID</label>
+                <input type="text" id="twilioSid" placeholder="AC...">
+            </div>
+
+            <div class="form-group">
+                <label for="twilioToken">Twilio Auth Token</label>
+                <input type="password" id="twilioToken" placeholder="Auth Token">
+            </div>
+
+            <div class="form-group">
+                <label for="twilioFrom">Twilio Sandbox Number</label>
+                <input type="text" id="twilioFrom" value="+14155238886">
+                <div class="help-text">Default Twilio Sandbox: +14155238886</div>
+            </div>
+
+            <div class="form-group">
+                <label for="whatsappPhone">Your WhatsApp Number</label>
+                <input type="text" id="whatsappPhone" placeholder="+91XXXXXXXXXX">
+                <div class="help-text">Include Country Code. <strong>Tip:</strong> For India, add +91 before your number. Example: +919693XXXXXX</div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 2rem 0;">
+
+            <h3>Gmail Authorization JSON</h3>
+            <div class="form-group">
+                <label for="gmailToken">OAuth Token JSON</label>
+                <textarea id="gmailToken" rows="5" placeholder='{"token": "ya29...", "refresh_token": "1//0g..."}'></textarea>
+                <div class="help-text">Paste the full output from generate_token.py here. Stored securely and encrypted.</div>
+            </div>
+
+            <div class="flex gap-4">
+                <button type="submit" class="btn btn-primary mt-4 flex-1">Save Configuration & Schedule</button>
+                <button type="button" id="testWhatsappBtn" class="btn btn-outline mt-4">Send Test Message</button>
+            </div>
+        </form>
+
+    </div>
+
+    <!-- Onboarding Wizard Modal -->
+    <div id="onboardingModal" class="modal">
+        <div class="modal-content">
+            <div class="wizard-header">
+                <h3 id="wizardTitle">Step 1: Create Twilio Account</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div id="wizardBody" class="wizard-body">
+                <!-- Step content injected by JS -->
+            </div>
+            <div class="wizard-footer">
+                <button id="prevBtn" class="btn btn-outline" style="visibility: hidden;">Previous</button>
+                <div id="stepDots" class="step-dots"></div>
+                <button id="nextBtn" class="btn btn-primary">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/main.js?v=1.1"></script>
+</body>
+</html>

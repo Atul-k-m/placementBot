@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in | ReminderBot</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/" class="nav-brand">ReminderBot</a>
+        <div class="nav-links">
+            <a href="/signup" class="btn btn-outline">Sign up instead</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <form id="loginForm" class="card auth-form">
+            <h2 class="text-center">Welcome back</h2>
+            <p class="text-center mb-4">Log in to manage your bot</p>
+            
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" id="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Log in</button>
+        </form>
+    </div>
+    
+    <script src="/static/main.js"></script>
+</body>
+</html>

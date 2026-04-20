@@ -1,0 +1,49 @@
+services:
+  # ──────────────────────────────────────────────
+  # Web Service — serves the FastAPI app
+  # ──────────────────────────────────────────────
+  - type: web
+    name: reminderbot-web
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn main:app -w 2 -k uvicorn.workers.UvicornWorker --timeout 120
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: reminderbot-db
+          property: connectionString
+      - key: AES_MASTER_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: GEMINI_API_KEY
+        sync: false          # Set manually in Render dashboard (optional)
+
+  # ──────────────────────────────────────────────
+  # Worker — owns APScheduler, never sleeps
+  # ──────────────────────────────────────────────
+  - type: worker
+    name: reminderbot-worker
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python worker.py
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: reminderbot-db
+          property: connectionString
+      - key: AES_MASTER_KEY
+        sync: false          # MUST match the web service value — copy manually after first deploy
+      - key: JWT_SECRET_KEY
+        sync: false          # MUST match the web service value — copy manually after first deploy
+      - key: WEB_URL
+        sync: false          # Set to https://reminderbot-web.onrender.com after first deploy
+
+# ──────────────────────────────────────────────
+# PostgreSQL — free tier (expires after 90 days)
+# ──────────────────────────────────────────────
+databases:
+  - name: reminderbot-db
+    plan: free

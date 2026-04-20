@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# OAuth credentials — NEVER commit these
+credentials.json
+token.json
+token.pickle
+
+# Environment variable files
+.env
+.env.*
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local database files — use PostgreSQL in production
+*.sqlite
+*.db
+
+# .env.example is safe to commit; actual .env files are not
+.env.local

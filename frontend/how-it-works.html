@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How it Works | ReminderBot</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/" class="nav-brand">ReminderBot</a>
+        <div class="nav-links">
+            <a href="/login">Log in</a>
+            <a href="/signup" class="btn btn-primary" style="margin-left: 1.5rem; color: #fff;">Register</a>
+        </div>
+    </nav>
+    
+    <div class="container hero" style="padding-top: 3rem; text-align: left;">
+        <h1 class="text-center" style="margin-bottom: 3rem;">3 Steps to Inbox Zen</h1>
+        
+        <div class="card">
+            <h3>Step 1: Connect Gmail</h3>
+            <p>Generate a local OAuth token from Google Cloud Console. Paste the raw JSON securely into our dashboard. We immediately encrypt the token using AES-256 so that it remains protected and unreadable in the database.</p>
+        </div>
+
+        <div class="card">
+            <h3>Step 2: Add Senders</h3>
+            <p>Specify the exact email addresses you want monitored (like support@apple.com, hr@company.com). The bot will ignore everything else.</p>
+        </div>
+
+        <div class="card">
+            <h3>Step 3: Get WhatsApp Alerts</h3>
+            <p>Register your phone number with the free CallMeBot API. Set your desired notification time. Every day at your scheduled time, the bot securely fetches the emails and sends a beautiful digest directly to your native WhatsApp.</p>
+        </div>
+
+        <div class="text-center mt-8">
+            <a href="/signup" class="btn btn-primary">Try it today</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign up | ReminderBot</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/" class="nav-brand">ReminderBot</a>
+        <div class="nav-links">
+            <a href="/login" class="btn btn-outline">Log in instead</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <form id="signupForm" class="card auth-form">
+            <h2 class="text-center">Create your account</h2>
+            <p class="text-center mb-4">A safe, encrypted space for your automation</p>
+            
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" id="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+                <div class="help-text">Make it a strong one.</div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Sign up securely</button>
+            <p class="text-center help-text mt-4">By signing up, you agree to AES-256 encrypt your API tokens securely with us.</p>
+        </form>
+    </div>
+    
+    <script src="/static/main.js"></script>
+</body>
+</html>
