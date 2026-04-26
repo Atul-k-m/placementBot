@@ -41,7 +41,7 @@ WEB_URL = os.environ.get("WEB_URL", "").rstrip("/")
 # ---------------------------------------------------------------------------
 scheduler = BlockingScheduler(
     jobstores={"default": SQLAlchemyJobStore(url=SQLALCHEMY_DATABASE_URL)},
-    timezone="UTC",
+    timezone="Asia/Kolkata",
 )
 
 

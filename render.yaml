@@ -1,3 +1,13 @@
+envGroups:
+  - name: reminderbot-secrets
+    envVars:
+      - key: AES_MASTER_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: GEMINI_API_KEY
+        sync: false
+
 services:
   - type: web
     name: reminderbot-web
@@ -10,12 +20,28 @@ services:
         fromDatabase:
           name: reminderbot-db
           property: connectionString
-      - key: SECRET_KEY
-        generateValue: true
-      - key: ENCRYPTION_KEY
-        generateValue: true
-      - key: GEMINI_API_KEY
-        sync: false
+    envGroupNames:
+      - reminderbot-secrets
+
+  - type: worker
+    name: reminderbot-worker
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python worker.py
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: reminderbot-db
+          property: connectionString
+      - key: WEB_URL
+        fromService:
+          type: web
+          name: reminderbot-web
+          envVarKey: RENDER_EXTERNAL_URL
+    envGroupNames:
+      - reminderbot-secrets
+
 databases:
   - name: reminderbot-db
     plan: free

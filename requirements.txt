@@ -17,3 +17,5 @@ python-multipart
 google-genai
 pydantic[email]
 python-dotenv
+pytz
+tzlocal
