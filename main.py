@@ -28,10 +28,16 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
-from database import engine, Base, get_db
+from database import engine, Base, get_db, SQLALCHEMY_DATABASE_URL
 import models
 import security
 import bot_core
+
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from apscheduler.triggers.interval import IntervalTrigger
+from scheduler import sync_all_users
+from opportunity_scraper import update_opportunities_cache
 
 # AI hero (optional dependency)
 try:
@@ -45,13 +51,48 @@ Base.metadata.create_all(bind=engine)
 
 
 # ---------------------------------------------------------------------------
-# App lifespan — web service is stateless, no scheduler here
+# App lifespan — starts the BackgroundScheduler
 # ---------------------------------------------------------------------------
+scheduler = BackgroundScheduler(
+    jobstores={"default": SQLAlchemyJobStore(url=SQLALCHEMY_DATABASE_URL)},
+    timezone="Asia/Kolkata",
+)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Web service starts: nothing scheduler-related to do
+    # --- Start scheduler ---
+    sync_all_users(scheduler)
+    
+    def _sync_wrapper():
+        sync_all_users(scheduler)
+
+    scheduler.add_job(
+        _sync_wrapper,
+        trigger=IntervalTrigger(seconds=60),
+        id="sync_all_users",
+        replace_existing=True,
+    )
+
+    scheduler.add_job(
+        update_opportunities_cache,
+        trigger=IntervalTrigger(hours=6),
+        id="update_opportunities_cache",
+        replace_existing=True,
+    )
+    # Run once on startup
+    scheduler.add_job(
+        update_opportunities_cache,
+        id="update_opportunities_cache_startup",
+        replace_existing=True,
+    )
+    
+    scheduler.start()
+    logging.info("[Web] Background scheduler started inside web process.")
+    
     yield
-    # Web service stops: nothing to tear down
+    
+    # Web service stops: tear down
+    scheduler.shutdown(wait=False)
 
 app = FastAPI(title="ReminderBot Web", lifespan=lifespan)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/login")
