@@ -58,13 +58,13 @@ scheduler = BackgroundScheduler(
     timezone="Asia/Kolkata",
 )
 
+def _sync_wrapper():
+    sync_all_users(scheduler)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # --- Start scheduler ---
     sync_all_users(scheduler)
-    
-    def _sync_wrapper():
-        sync_all_users(scheduler)
 
     scheduler.add_job(
         _sync_wrapper,
