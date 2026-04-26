@@ -23,7 +23,7 @@ def _get_scheduler():
     from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
     return BackgroundScheduler(
         jobstores={"default": SQLAlchemyJobStore(url=SQLALCHEMY_DATABASE_URL)},
-        timezone="Asia/Kolkata",
+        timezone="UTC",
     )
 
 
@@ -75,11 +75,11 @@ def sync_user_job(scheduler_instance, user: User):
     except Exception:
         hour, minute = 8, 0
 
-    trigger = CronTrigger(hour=hour, minute=minute, timezone="Asia/Kolkata")
+    trigger = CronTrigger(hour=hour, minute=minute, timezone="UTC")
 
     if scheduler_instance.get_job(job_id):
         scheduler_instance.reschedule_job(job_id, trigger=trigger)
-        log.info(f"[Sync] Rescheduled job for user {user.id} → {user.notification_time} IST")
+        log.info(f"[Sync] Rescheduled job for user {user.id} → {user.notification_time} UTC")
     else:
         scheduler_instance.add_job(
             execute_user_bot,
@@ -88,7 +88,7 @@ def sync_user_job(scheduler_instance, user: User):
             args=[user.id],
             replace_existing=True,
         )
-        log.info(f"[Sync] Added job for user {user.id} → {user.notification_time} IST")
+        log.info(f"[Sync] Added job for user {user.id} → {user.notification_time} UTC")
 
 
 def sync_all_users(scheduler_instance):

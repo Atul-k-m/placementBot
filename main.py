@@ -55,7 +55,7 @@ Base.metadata.create_all(bind=engine)
 # ---------------------------------------------------------------------------
 scheduler = BackgroundScheduler(
     jobstores={"default": SQLAlchemyJobStore(url=SQLALCHEMY_DATABASE_URL)},
-    timezone="Asia/Kolkata",
+    timezone="UTC",
 )
 
 def _sync_wrapper():
