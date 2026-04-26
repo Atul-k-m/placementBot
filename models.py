@@ -113,3 +113,12 @@ class User(Base):
     @whatsapp_phone.setter
     def whatsapp_phone(self, value):
         self._whatsapp_phone_encrypted = security.encrypt_data(value)
+
+class OpportunityCache(Base):
+    __tablename__ = "opportunity_cache"
+
+    id = Column(Integer, primary_key=True, index=True)
+    platform = Column(String, index=True, nullable=False)
+    data = Column(String, default="[]") # JSON string
+    updated_at = Column(DateTime, default=datetime.utcnow)
+

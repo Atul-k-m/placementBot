@@ -19,6 +19,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 
 from database import SQLALCHEMY_DATABASE_URL
 from scheduler import sync_all_users, execute_user_bot  # noqa: F401 (re-exported for APScheduler)
+from opportunity_scraper import update_opportunities_cache
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -81,10 +82,12 @@ if __name__ == "__main__":
     # --- Initial sync: register jobs for all currently-enabled users ---
     sync_all_users(scheduler)
 
+    def _sync_wrapper():
+        sync_all_users(scheduler)
+
     # --- Periodic re-sync every 60 s (picks up settings saved via web UI) ---
     scheduler.add_job(
-        sync_all_users,
-        args=[scheduler],
+        _sync_wrapper,
         trigger=IntervalTrigger(seconds=60),
         id="sync_all_users",
         replace_existing=True,
@@ -100,6 +103,21 @@ if __name__ == "__main__":
             replace_existing=True,
         )
         log.info("[Worker] Self-ping registered (every 10 min)")
+
+    # --- Opportunities Cache Update every 6 hours ---
+    scheduler.add_job(
+        update_opportunities_cache,
+        trigger=IntervalTrigger(hours=6),
+        id="update_opportunities_cache",
+        replace_existing=True,
+    )
+    # Run once on startup so the cache is populated immediately
+    scheduler.add_job(
+        update_opportunities_cache,
+        id="update_opportunities_cache_startup",
+        replace_existing=True,
+    )
+    log.info("[Worker] Opportunities cache periodic update registered (every 6 hours)")
 
     log.info("[Worker] Scheduler started — waiting for jobs…")
     try:
